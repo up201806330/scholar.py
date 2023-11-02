@@ -411,7 +411,7 @@ class ScholarArticleParser(object):
     def _parse_globals(self):
         tag = self.soup.find(name='div', attrs={'id': 'gs_ab_md'})
         if tag is not None:
-            raw_text = tag.findAll(text=True)
+            raw_text = tag.findAll(string=True)
             # raw text is a list because the body contains <b> etc
             if raw_text is not None and len(raw_text) > 0:
                 try:
@@ -433,7 +433,7 @@ class ScholarArticleParser(object):
 
             if tag.name == 'div' and self._tag_has_class(tag, 'gs_rt') and \
                     tag.h3 and tag.h3.a:
-                self.article['title'] = ''.join(tag.h3.a.findAll(text=True))
+                self.article['title'] = ''.join(tag.h3.a.findAll(string=True))
                 self.article['url'] = self._path2url(tag.h3.a['href'])
                 if self.article['url'].endswith('.pdf'):
                     self.article['url_pdf'] = self.article['url']
@@ -543,7 +543,7 @@ class ScholarArticleParser120201(ScholarArticleParser):
                 continue
 
             if tag.name == 'h3' and self._tag_has_class(tag, 'gs_rt') and tag.a:
-                self.article['title'] = ''.join(tag.a.findAll(text=True))
+                self.article['title'] = ''.join(tag.a.findAll(string=True))
                 self.article['url'] = self._path2url(tag.a['href'])
                 if self.article['url'].endswith('.pdf'):
                     self.article['url_pdf'] = self.article['url']
@@ -596,7 +596,7 @@ class ScholarArticleParser120726(ScholarArticleParser):
                 # We now distinguish the two.
                 try:
                     atag = tag.h3.a
-                    self.article['title'] = ''.join(atag.findAll(text=True))
+                    self.article['title'] = ''.join(atag.findAll(string=True))
                     self.article['url'] = self._path2url(atag['href'])
                     if self.article['url'].endswith('.pdf'):
                         self.article['url_pdf'] = self.article['url']
@@ -604,7 +604,7 @@ class ScholarArticleParser120726(ScholarArticleParser):
                     # Remove a few spans that have unneeded content (e.g. [CITATION])
                     for span in tag.h3.findAll(name='span'):
                         span.clear()
-                    self.article['title'] = ''.join(tag.h3.findAll(text=True))
+                    self.article['title'] = ''.join(tag.h3.findAll(string=True))
 
                 if tag.find('div', {'class': 'gs_a'}):
                     year = self.year_re.findall(tag.find('div', {'class': 'gs_a'}).text)
@@ -615,7 +615,7 @@ class ScholarArticleParser120726(ScholarArticleParser):
 
                 if tag.find('div', {'class': 'gs_rs'}):
                     # These are the content excerpts rendered into the results.
-                    raw_text = tag.find('div', {'class': 'gs_rs'}).findAll(text=True)
+                    raw_text = tag.find('div', {'class': 'gs_rs'}).findAll(string=True)
                     if len(raw_text) > 0:
                         raw_text = ''.join(raw_text)
                         raw_text = raw_text.replace('\n', '')
