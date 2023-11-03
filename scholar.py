@@ -297,6 +297,7 @@ class ScholarArticle(object):
             'url_versions':  [None, 'Versions list',  8],
             'url_citation':  [None, 'Citation link',  9],
             'excerpt':       [None, 'Excerpt',       10],
+            'publisher':     [None, 'Publisher',     11],
         }
 
         # The citation data in one of the standard export formats,
@@ -552,6 +553,9 @@ class ScholarArticleParser120201(ScholarArticleParser):
                 year = self.year_re.findall(tag.text)
                 self.article['year'] = year[0] if len(year) > 0 else None
 
+                publisher = tag.text.rsplit('-', 1)[-1] if '-' in tag.text else None
+                self.article['publisher'] = publisher
+
             if tag.name == 'div' and self._tag_has_class(tag, 'gs_fl'):
                 self._parse_links(tag)
 
@@ -607,8 +611,12 @@ class ScholarArticleParser120726(ScholarArticleParser):
                     self.article['title'] = ''.join(tag.h3.findAll(string=True))
 
                 if tag.find('div', {'class': 'gs_a'}):
-                    year = self.year_re.findall(tag.find('div', {'class': 'gs_a'}).text)
+                    gs_a_text = tag.find('div', {'class': 'gs_a'}).text
+                    year = self.year_re.findall(gs_a_text)
                     self.article['year'] = year[0] if len(year) > 0 else None
+
+                    publisher = gs_a_text.rsplit('-', 1)[-1] if '-' in gs_a_text else None
+                    self.article['publisher'] = publisher
 
                 if tag.find('div', {'class': 'gs_fl'}):
                     self._parse_links(tag.find('div', {'class': 'gs_fl'}))
